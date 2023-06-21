@@ -1,3 +1,4 @@
 # Add files to ignore specific to jupyter notebooks and mac
 .DS_Store 
 .ipynb_checkpoints 
+src/__pycache__/*

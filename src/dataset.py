@@ -1,10 +1,12 @@
 import os
 import typing as tp 
 import pandas as pd
+import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
 
 CAT_FEATURES = [
-    'Vlo-I',
+    #'Vlo-I',
     'DIANOM',
     'MES',
     'TIPOVUELO',
@@ -55,6 +57,7 @@ def load_dataset(
 
     # get labels
     labels = dataset[LABEL]
+    labels = LabelEncoder().fit_transform(labels)
     dataset = dataset.drop([LABEL], axis=1)
 
 
@@ -66,7 +69,9 @@ def load_dataset(
     print("")
     print(f"Number of datapoints: {len(dataset)}")
     print(f"Number of datapoints train: {len(X_train)}")
+    print(f"Percentage positive examples train: {np.sum(y_train)/len(y_train)}")
     print(f"Number of datapoints test: {len(X_test)}")
+    print(f"Percentage positive examples test: {np.sum(y_test)/len(y_test)}")
     print(f"Number of features per house: {len(dataset.columns)}")
     return X_train, X_test, y_train, y_test
 
