@@ -26,7 +26,6 @@ def train(
         seed=seed,
         val_size=val_size
     )
-
     print("---------- Model Info ----------")
     print("XGBoostClassifier")
     for param,number in params.items():
