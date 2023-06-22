@@ -7,6 +7,8 @@ WORKDIR /code
 # copy dependencies
 COPY ./requirements.txt /code/requirements.txt
 
+ENV PORT 80
+
 # install dependencies
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
@@ -17,4 +19,4 @@ COPY ./models/flight_delay.json /code/models/flight_delay.json
 COPY ./app.py /code/app.py
 
 # run app
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]
+CMD exec uvicorn app:app --host 0.0.0.0 --port ${PORT} --workers 1
