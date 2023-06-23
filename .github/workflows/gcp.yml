@@ -46,5 +46,9 @@ jobs:
       uses: google-github-actions/deploy-cloudrun@v1
       with:
         service: delaysapi
+        no_traffic: true
         image: us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+
+    -name: Update Run Service Traffic
+      run: gcloud run services update-traffic delaysapi --to-latest
 
