@@ -49,6 +49,6 @@ jobs:
         no_traffic: true
         image: us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
 
-    -name: Update Run Service Traffic
+    - name: Update Run Service Traffic
       run: gcloud run services update-traffic delaysapi --to-latest
 
