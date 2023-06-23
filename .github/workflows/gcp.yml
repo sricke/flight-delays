@@ -50,5 +50,5 @@ jobs:
         image: us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
 
     - name: Update Run Service Traffic
-      run: gcloud run services update-traffic delaysapi --to-latest
+      run: gcloud run services update-traffic delaysapi --to-latest --region=us-central1
 
