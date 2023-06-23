@@ -8,10 +8,10 @@ jobs:
     name: Build and Push to GCP
     runs-on: ubuntu-latest
     env:
-      IMAGE_NAME: flight-delays
+      REP_NAME: images
       PROJECT_ID: infra-hulling-390616
       REGION: us-central1
-      REP_NAME: images
+      IMAGE_NAME: flight-delays
     steps: 
     - name: Checkout
       uses: actions/checkout/@v2
@@ -35,14 +35,14 @@ jobs:
 
     - name: Push Docker Image to Artifact Registry  
       run: |-
-        docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.IMAGE_NAME }}/${{ env.REP_NAME }}:${{ github.sha }}
-        docker push ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.IMAGE_NAME }}/${{ env.REP_NAME }}:${{ github.sha }}
+        docker tag ${{ env.IMAGE_NAME }}:${{ github.sha }} ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.REP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.REP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
     - id: Deploy
       name: Deploy Docker Image to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
       with:
         service: delaysapi
-        image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}/${{ env.REP_NAME }}:${{ github.sha }}
+        image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
 
