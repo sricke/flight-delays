@@ -9,9 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REP_NAME: images
-      PROJECT_ID: infra-hulling-390616
       REGION: us-central1
       IMAGE_NAME: flight-delays
+      SERVICE_NAME: delaysapi
     steps: 
     - name: Checkout
       uses: actions/checkout/@v2
@@ -42,7 +42,7 @@ jobs:
       name: Deploy Docker Image to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
       with:
-        service: delaysapi
-        image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+        service: ${{ env.SERVICE_NAME }}
+        image: ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.REP_NAME }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
 
 
