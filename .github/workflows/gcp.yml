@@ -10,7 +10,8 @@ jobs:
     env:
       IMAGE_NAME: flight-delays
       PROJECT_ID: infra-hulling-390616
-      REGION: us-west2
+      REGION: us-central1
+      REP_NAME: images
     steps: 
     - name: Checkout
       uses: actions/checkout/@v2
@@ -30,22 +31,18 @@ jobs:
     - name: Configure Docker Client # aunthenticate to rep
       run: |-
         gcloud auth configure-docker --quiet
-        gcloud auth configure-docker us-west2-docker.pkg.dev --quiet
+        gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-    - name: Push Docker Image to Artifact Registry
-      env:
-        GIT_TAG: v0.1.0
+    - name: Push Docker Image to Artifact Registry  
       run: |-
-        docker tag $IMAGE_NAME:latest us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-        docker tag $IMAGE_NAME:latest us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
-        docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
-        docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
+        docker tag $IMAGE_NAME:latest ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.IMAGE_NAME }}/${{ env.REP_NAME }}:${{ github.sha }}
+        docker push ${{ env.REGION }}-docker.pkg.dev/$PROJECT_ID/${{ env.IMAGE_NAME }}/${{ env.REP_NAME }}:${{ github.sha }}
 
     - id: Deploy
       name: Deploy Docker Image to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
       with:
         service: delaysapi
-        image: us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME
+        image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}/${{ env.REP_NAME }}:${{ github.sha }}
 
 
