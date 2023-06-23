@@ -16,6 +16,7 @@ jobs:
       uses: actions/checkout/@v2
 
     - id: 'auth' # aunthenticate
+      name: 'Authenticate to Google'
       uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: '${{ secrets.SERVICE_ACCOUNT_KEY }}'
