@@ -44,7 +44,7 @@ def train(
 
     print("Training model...")
     clf.fit(X_train, y_train, eval_set=[(X_test, y_test), (X_train, y_train)])
-    clf.save_model(os.path.join(output_dir, "flight_delay1.json"))
+    clf.save_model(os.path.join(output_dir, "flight_delay.json"))
 
     y_score = clf.predict_proba(X_test)  
     y_pred = np.argmax(y_score, axis=1)
