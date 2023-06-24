@@ -15,6 +15,8 @@ Pasos para reproducir:
     │   └── workflows
     │       └── gcp.yml <- Workflow de github actions para CI/CD de deploy de la API en Google Cloud Platform.
     │
+    ├── assets <- Contiene imágenes para describir trabajo en el README.
+    │
     ├── datasets
     │   ├── dataset_SCL.csv        <- Dataset de información de vuelos y atrasos
     │   └── synthetic_features.csv <- Dataset generado de features sintéticas.
@@ -90,12 +92,29 @@ Como métrica se decidió utilizar **AUC (Area under ROC curve)**. La curva ROC 
 
 ##### API Rest
 
-Para la API, se decidió utilizar el framework FastAPI, que en general tiene mucho uso dada su facilidad, funcionamiento y documnetación. La API tiene solo dos endpoints:
+Para la API, se decidió utilizar el framework **FastAPI**, que en general tiene mucho uso dada su facilidad, funcionamiento y buena documentación. La API tiene solo dos endpoints:
 
 1. GET / . Bienvenida de la API
-2. POST 
+2. POST /predict. A cargo de generar una predicción. 
 
 ![Documentación del endpoint POST API](/assets/api-post.png "Post API")
 
+Esta API se corre en una instancia dockerizada. 
 
+------------
+
+##### Deploy CI/CD.
+
+Para hacer el deploy de la aplicación se utilizó Google Cloud Platform. Los servicios utilizados son:
+
+1. **Google Artifact Registry**: Permite guardar imágenes de contenedores de Docker. En este caso se utilizó para guardar la imagen de la API del modelo capaz de recibir requests de predicciones.
+2. **Google Cloud Run**: Permite correr las imágenes guardadas en Google Artifact Registry y exponer los endpoints en un servidor de GCP. La decisión de utilizarlo se debe a que es lo más fácil para correr instancias de Artifact Registry y además por el **escalamiento automático**. Google es capaz de asignar inteligentemente el número de CPUs según el número de requests, desde 0 si no hay tráfico hasta un máximo de **100 cpus en ambientes de estrés**. Ya que se quiere desarrollar una API fácil y escalable esta parecía la mejor opción. 
+
+Finalmente, para CI/CD se utlizó **Github Actions**. Se decidió por esta solución ya que se integra fácilmente con GCP y además porque permite generar triggers de deploy en base a los commits de código. En este caso, se configuró para que cada vez que se hiciera un merge de código a la rama `main` se corriera el workflow. Este workflow incluye la autentificación en GCP, la creación de una instancia dockerizada de la API, guardar la imagen en Artifact Registry y finalmente correr esta instancia en Cloud Run para dejar la API en un servidor de Google.
+
+Dentro de este pipeline se podría haber agregado unit tests de la API pero por temas de tiempo se dejó para futuro. 
+
+------------
+
+##### Prubas de estrés.
 
