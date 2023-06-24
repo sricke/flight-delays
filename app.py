@@ -38,7 +38,7 @@ class FlightInfo(BaseModel):
 def root():
     return {"message": "Flight Delay Model"}
 
-# root for predecting delay instance
+# root for predicting delay instance
 @app.post("/predict")
 def predict_delay(flight_info: FlightInfo):
     data = {}
