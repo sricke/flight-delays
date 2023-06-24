@@ -6,12 +6,14 @@ from sklearn.metrics import roc_auc_score, precision_score, recall_score
 from xgboost import XGBClassifier
 
 params = {
-    "tree_method": "hist",
-    "n_estimators": 32,
-    "colsample_bylevel": 0.7,
-    #"gamma": 0.1,
-    "max_depth": 40
-}
+    'subsample': 1.0,
+    'n_estimators': 700,
+    'min_child_weight': 10, 
+    'max_depth': 6, 
+    'learning_rate': 0.1, 
+    'gamma': 0.2, 
+    'colsample_bytree': 0.6
+} # from notebook hyperparam search
 
 def train(
         params: tp.List,
@@ -34,6 +36,7 @@ def train(
     # in this case since we're only dealing with categorical columns and tree based method we dont need to preprocess input
     clf = XGBClassifier(
         **params,   
+        tree_method="hist",
         eval_metric="error",
         enable_categorical=True, # needed since no preprocess
         #max_cat_to_onehot=1,
@@ -41,7 +44,7 @@ def train(
 
     print("Training model...")
     clf.fit(X_train, y_train, eval_set=[(X_test, y_test), (X_train, y_train)])
-    clf.save_model(os.path.join(output_dir, "flight_delay2.json"))
+    clf.save_model(os.path.join(output_dir, "flight_delay1.json"))
 
     y_score = clf.predict_proba(X_test)  
     y_pred = np.argmax(y_score, axis=1)
