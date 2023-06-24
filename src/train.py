@@ -9,8 +9,8 @@ params = {
     "tree_method": "hist",
     "n_estimators": 32,
     "colsample_bylevel": 0.7,
-    "gamma": 0.1,
-    "max_depth": 20
+    #"gamma": 0.1,
+    "max_depth": 40
 }
 
 def train(
@@ -41,7 +41,7 @@ def train(
 
     print("Training model...")
     clf.fit(X_train, y_train, eval_set=[(X_test, y_test), (X_train, y_train)])
-    clf.save_model(os.path.join(output_dir, "flight_delay.json"))
+    clf.save_model(os.path.join(output_dir, "flight_delay2.json"))
 
     y_score = clf.predict_proba(X_test)  
     y_pred = np.argmax(y_score, axis=1)

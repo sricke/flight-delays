@@ -44,13 +44,14 @@ def load_dataset(
 
     # load datasets
     dataset = pd.read_csv(data_path, usecols=CAT_FEATURES)
-    synthetic_data = pd.read_csv(synthetic_path, index_col=0, usecols=SYNTHETIC_FEATURES) if synthetic_path else None
+    synthetic_data = pd.read_csv(synthetic_path, usecols=SYNTHETIC_FEATURES) if synthetic_path else None
 
     # join them
+    print(synthetic_data.head())
     dataset = pd.merge(dataset, synthetic_data, left_index=True, right_index=True) if synthetic_path else dataset
 
     # drop missing values. In this case only one
-    dataset = dataset.dropna(axis=1) 
+    dataset = dataset.dropna(axis=0) 
 
     # need to fix category type to train xgboost model
     dataset = dataset.astype("category")
@@ -59,9 +60,7 @@ def load_dataset(
     labels = dataset[LABEL]
     labels = LabelEncoder().fit_transform(labels)
     dataset = dataset.drop([LABEL], axis=1)
-
-
-
+    print(dataset.head())
     # split dataset, stratified on airlines. 
     X_train, X_test, y_train, y_test = train_test_split(dataset, labels, test_size=val_size, random_state=seed, stratify=dataset[STRATIFY])
 
@@ -72,6 +71,6 @@ def load_dataset(
     print(f"Percentage positive examples train: {np.sum(y_train)/len(y_train)}")
     print(f"Number of datapoints test: {len(X_test)}")
     print(f"Percentage positive examples test: {np.sum(y_test)/len(y_test)}")
-    print(f"Number of features per house: {len(dataset.columns)}")
+    print(f"Number of features per row: {len(dataset.columns)}")
     return X_train, X_test, y_train, y_test
 
