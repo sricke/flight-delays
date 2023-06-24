@@ -116,26 +116,26 @@ Dentro de este pipeline se podría haber agregado unit tests de la API pero por 
 
 ------------
 
-##### Prubas de estrés.
+##### Pruebas de estrés.
 
-Para realizar pruebas de estrés de la aplicación se utilizó JMeter. Se configuró pensando que 1 request se demoraba 1 segundo por ende para tener 50.000 requests en 45 segundos se necesitaban 1100 threads concurrentes haciendo requests sucesivas. Se dio tiempo de 1 minuto pero con 15 segundos de ramp-up. Esto último para evitar un cold-start del servicio. Recordar que Cloud Run asigna la menor cantidad de CPUs posible y escala según requests. Los resultados arrojaron las siguientes métricas:
+Para realizar pruebas de estrés de la aplicación se utilizó **JMeter**. Se configuró pensando que 1 request se demoraba 1 segundo por ende para tener 50.000 requests en 45 segundos se necesitaban **1100 threads concurrentes** haciendo requests sucesivas. Se dio tiempo de **1 minuto pero con 15 segundos de ramp-up**. Esto último para evitar un cold-start del servicio. Recordar que **Cloud Run asigna la menor cantidad de CPUs posible y escala según requests**. Los resultados arrojaron las siguientes métricas:
  
-- Total de requests: 91.470
-- Throughput: 89.065 requests/minuto
-- Average Response Time: 635 ms
+- **Total de requests**: 91.470
+- **Throughput**: 89.065 requests/minuto
+- **Average Response Time**: 635 ms
 
 Como el tiempo de respuesta promedio fue menor de 1 segundo (considerado inicialmente) se obtuvieron 91.470 requests en 1 minuto (mucho más que las planificadas) pero en todo caso el servicio logró escalar correctamente. De hecho si vemos el gráfico del tiempo de respuesta:
 
 ![Gráfico del tiempo de respuesta](/assets/response-time.png "Tiempo de respuesta")
 
-Vemos que el tiempo de respuesta incrementa linealmente hasta llegar a un peak aproximado de 780ms a los 20 segundos. Esto se debe al cold start del servicio que debe asignar más CPUs dado el alto número de requests. Luego, baja linealmente hasta llegar a aproximadente 520 ms en el peak de requests, cercano a los 440 ms de tiempo de respuesta iniciales cuando recién se estaban incrementando el número de requests concurrentes. Esto último indica que todavía no se logra alcanzar el cuello de botella del servico.
+Vemos que el tiempo de respuesta incrementa linealmente hasta llegar a un **peak aproximado de 780ms** a los 20 segundos. Esto se debe al cold start del servicio que debe asignar más CPUs dado el alto número de requests. Luego, **baja linealmente hasta llegar a aproximadente 520 ms** en el peak de requests, cercano a los 440 ms de tiempo de respuesta iniciales cuando recién se estaban incrementando el número de requests concurrentes. Esto último indica que todavía no se logra alcanzar el cuello de botella del servico.
 
-De hecho, estos lo podemos comprobar con las métricas entregadas por el servicio de Cloud Run. Este último arroja el siguiente gráfico:
+De hecho, esto lo podemos comprobar con las métricas entregadas por el servicio de Cloud Run. Este último arroja el siguiente gráfico:
 
 ![Gráfico de CPUs utilizadas](/assets/cpus.png "CPUs utilizadas")
 
-Vemos que el número de CPUs utilizadas crece linealmente y llega a su peak de 65 instancias. Es decir, todavía existe espacio para llegar al máximo (cuello de botella) de 100 instancias.
+Vemos que el número de CPUs utilizadas crece linealmente y llega a su **peak de 65 instancias**. Es decir, todavía existe espacio para llegar al máximo (cuello de botella) de 100 instancias.
 
-Como conclusión, el servicio logra escalar staisfactoriamente al número de de requests de la prueba de estrés. Como mejora, se puede evitar el cold start asigando un mínimo de instancias utilizadas. Esto permitiría que el tiempo de respuesta sea más estable. 
+Como conclusión, el servicio logra escalar staisfactoriamente al número de requests de la prueba de estrés. Como mejora, se puede evitar el cold start **asignando un mínimo de instancias utilizadas**. Esto permitiría que el tiempo de respuesta sea más estable con el tradeoff de más recursos consumidos y mayores costos.
 
 
