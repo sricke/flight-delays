@@ -18,7 +18,7 @@ vocab = {
             "airline": "OPERA",
             "city_origin": "SIGLAORI", 
             "city_destiny": "SIGLADES", 
-            #"Temp-A": ["True"],
+            "high_season": "Temp-A",
             "time_day": "Per-D"
         }
 
@@ -30,8 +30,8 @@ class FlightInfo(BaseModel):
     airline: str
     city_origin: str
     city_destiny: str
+    high_season: bool
     time_day: str
-    #high_season: bool
 
 # home root
 @app.get("/")
@@ -46,5 +46,5 @@ def predict_delay(flight_info: FlightInfo):
         feature = vocab[key] # get column name
         data[feature] = [value] # assign value
     df = pd.DataFrame(data).astype("category") # make sure value types
-    prediction = model.predict(df) 
+    prediction = model.predict_proba(df) 
     return prediction.item(0)
